@@ -1,6 +1,7 @@
 import 'dart:html' as html;
 import 'dart:js' as js;
 import 'dart:ui' as ui;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
@@ -20,7 +21,7 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    _initTeXView();
+    // _initTeXView();
     // updateKeepAlive();
 
     return SizedBox(
@@ -51,13 +52,16 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
       print(_height.toString());
       print('_isIntialPageRendered - > ' + _isIntialPageRendered.toString());
 
-      if (height != _height) {
-        _initTeXView();
-        // setState(() {
+      if (!_isIntialPageRendered) {
+        setState(() {
           _height = double.parse(height.toString());
-          _width = 150;
+          _width = 300;
           _isIntialPageRendered = true;
-        // });
+        });
+
+        new Timer(const Duration(milliseconds: 400), () {
+          _initTeXView();
+        });
       }
     };
     js.context['OnTapCallback'] = (id) {
