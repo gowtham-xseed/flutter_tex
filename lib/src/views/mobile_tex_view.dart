@@ -12,7 +12,7 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   WebViewController _controller;
   int _port = 5353 + instanceCount;
   TeXViewServer _server;
-  double _height = 1;
+  double _height = 10;
   double _width;
   String _lastData;
   String _lastRenderingEngine;
