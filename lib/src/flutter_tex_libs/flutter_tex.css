@@ -6,6 +6,7 @@
 #TeXView {
     overflow: hidden;
     position: relative;
+    text-align: center;
     display: inline-block;
 }
 

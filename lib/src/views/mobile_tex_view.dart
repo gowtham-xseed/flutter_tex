@@ -128,7 +128,7 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
     if (_height != viewHeight) {
       setState(() {
         _height = viewHeight;
-        _width = viewWidth;
+        _width = viewWidth + 5;
       });
     }
     if (widget.onRenderFinished != null) {
