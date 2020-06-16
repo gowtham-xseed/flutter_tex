@@ -36,7 +36,7 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   String getRawData() {
     return CoreUtils.getRawData(widget.children, widget?.style);
   }
-  
+
   @override
   void didUpdateWidget(Widget oldWidget) {
     _initTeXView();
