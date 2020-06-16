@@ -47,9 +47,6 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
     super.initState();
     _initTeXView();
     js.context['RenderedTeXViewHeight'] = (height, width) {
-      print("height"+ (height != null ? height.toString() : 'NA'));
-      print("width"+ (width != null ? width.toString() : 'NA'));
-      print("_isIntialPageRendered" + _isIntialPageRendered.toString());
       if(!_isIntialPageRendered) {
         setState(() {
           _height = height;
@@ -70,10 +67,7 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   }
 
   void _initTeXView() {
-    print("_initTeXView");
     if (getRawData() != _lastData || true) {
-      print("==============_initTeXView==============");
-
       // ignore: undefined_prefixed_name
       ui.platformViewRegistry.registerViewFactory(
           viewId.toString(),
