@@ -121,9 +121,9 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
 
   void _renderedTeXViewHeightHandler(
       JavascriptMessage javascriptMessage) async {
-    double viewHeight = double.parse(javascriptMessage.message);
-    double viewWidth = double.parse(await _controller
-        .evaluateJavascript("document.getElementById('TeXView').offsetWidth;"));
+    List<String> heightWidthArray = javascriptMessage.message.split('-');
+    double viewHeight = double.parse(heightWidthArray[0]);
+    double viewWidth = double.parse(heightWidthArray[1]);
 
     if (_height != viewHeight) {
       setState(() {
