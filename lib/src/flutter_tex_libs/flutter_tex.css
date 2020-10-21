@@ -6,6 +6,8 @@
 #TeXView {
     overflow: hidden;
     position: relative;
+    text-align: center;
+    display: inline-block;
 }
 
 .tex-view-ink-well .ripple {

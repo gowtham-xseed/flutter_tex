@@ -12,7 +12,8 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   WebViewController _controller;
   int _port = 5353 + instanceCount;
   TeXViewServer _server;
-  double _height = 1;
+  double _height = 10;
+  double _width;
   String _lastData;
   String _lastRenderingEngine;
 
@@ -30,12 +31,14 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
     super.build(context);
     updateKeepAlive();
     _initTeXView();
-    return IndexedStack(
-      index: widget.showLoadingWidget ? _height == 1 ? 1 : 0 : 0,
-      children: <Widget>[
-        Container(
-          height: widget.height ?? _height,
-          child: WebView(
+    return Container(
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
+      height: widget.height ?? _height,
+      width: _width,
+      child: IndexedStack(
+        index: widget.showLoadingWidget ? _height == 1 ? 1 : 0 : 0,
+        children: <Widget>[
+          WebView(
             onPageFinished: (message) {
               if (widget.onPageFinished != null) {
                 widget.onPageFinished(message);
@@ -59,24 +62,24 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
             ]),
             javascriptMode: JavascriptMode.unrestricted,
           ),
-        ),
-        widget.loadingWidget ??
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                  Divider(
-                    height: 5,
-                    color: Colors.transparent,
-                  ),
-                  Text("Rendering TeXView...!")
-                ],
-              ),
-            )
-      ],
+          widget.loadingWidget ??
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(),
+                    Divider(
+                      height: 5,
+                      color: Colors.transparent,
+                    ),
+                    Text("Rendering TeXView...!")
+                  ],
+                ),
+              )
+        ],
+      ),
     );
   }
 
@@ -116,11 +119,16 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  void _renderedTeXViewHeightHandler(JavascriptMessage javascriptMessage) {
-    double viewHeight = double.parse(javascriptMessage.message);
+  void _renderedTeXViewHeightHandler(
+      JavascriptMessage javascriptMessage) async {
+    List<String> heightWidthArray = javascriptMessage.message.split('-');
+    double viewHeight = double.parse(heightWidthArray[0]);
+    double viewWidth = double.parse(heightWidthArray[1]);
+
     if (_height != viewHeight) {
       setState(() {
         _height = viewHeight;
+        _width = viewWidth + 5;
       });
     }
     if (widget.onRenderFinished != null) {

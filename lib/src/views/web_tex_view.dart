@@ -1,6 +1,7 @@
 import 'dart:html' as html;
 import 'dart:js' as js;
 import 'dart:ui' as ui;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
@@ -8,7 +9,9 @@ import 'package:flutter_tex/src/utils/core_utils.dart';
 
 class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   String _lastData;
-  double _height;
+  double _height = 50;
+  double _width = 100;
+  bool _isIntialPageRendered = false;
 
   String viewId = UniqueKey().toString();
 
@@ -18,14 +21,16 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    updateKeepAlive();
-    _initTeXView();
+    // _initTeXView();
+    // updateKeepAlive();
+
     return SizedBox(
-      height: widget.height ?? 500,
-      child: HtmlElementView(
-        viewType: viewId.toString(),
-      ),
-    );
+        height: _height,
+        width: _width,
+        child: HtmlElementView(
+          key: Key(viewId.toString()),
+          viewType: viewId.toString(),
+        ));
   }
 
   String getRawData() {
@@ -33,12 +38,30 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   }
 
   @override
+  void didUpdateWidget(Widget oldWidget) {
+    _initTeXView();
+  }
+
+  @override
   void initState() {
     super.initState();
-    js.context['RenderedTeXViewHeight'] = (height) {
-      //setState(() {
-      _height = double.parse(height.toString());
-      // });
+    _initTeXView();
+    js.context['RenderedTeXViewHeight'] = (heightAndWidth) {
+      if(!_isIntialPageRendered) {
+        List<String> heightWidthArray = heightAndWidth.split('-');
+        double viewHeight = double.parse(heightWidthArray[0]);
+        double viewWidth = double.parse(heightWidthArray[1]);
+
+        setState(() {
+          _height = viewHeight;
+          _width =  viewWidth;
+          _isIntialPageRendered = true;
+        });
+
+        new Timer(const Duration(milliseconds: 400), () {
+          _initTeXView();
+        });
+      }
     };
     js.context['OnTapCallback'] = (id) {
       if (widget.onTap != null) {
@@ -48,13 +71,11 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   }
 
   void _initTeXView() {
-    if (getRawData() != _lastData) {
+    if (getRawData() != _lastData || true) {
       // ignore: undefined_prefixed_name
       ui.platformViewRegistry.registerViewFactory(
           viewId.toString(),
           (int id) => html.IFrameElement()
-            ..width = MediaQuery.of(context).size.width.toString()
-            ..height = MediaQuery.of(context).size.height.toString()
             ..src =
                 "assets/packages/flutter_tex/src/flutter_tex_libs/${widget.renderingEngine.getEngineName()}/index.html"
             ..id = 'tex_view_$viewId'
