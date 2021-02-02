@@ -11,7 +11,7 @@ import 'package:flutter_tex/src/utils/fake_ui.dart'
 
 class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
   String _lastData;
-  double _height = 750;
+  double _height = 30;
   String viewId = UniqueKey().toString();
 
   Completer<double> heightCompleter = Completer<double>();
@@ -26,7 +26,7 @@ class TeXViewState extends State<TeXView> with AutomaticKeepAliveClientMixin {
     _initTeXView();
     return FutureBuilder(
       future: heightCompleter.future,
-      initialData: 500.0,
+      initialData: 30.0,
       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
         if (snapshot.hasData && !snapshot.hasError) {
           return SizedBox(
